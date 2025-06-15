@@ -2,7 +2,6 @@ import {Component, inject} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RouterLink, Router} from "@angular/router";
 import {AuthService} from '../services/auth.service';
-import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -21,21 +20,28 @@ export class Register {
 
   form = this.fb.nonNullable.group({
     username: ['', Validators.required],
-    email: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required]
   });
   errorMessage: string | null = null;
 
-  onSubmit() :void {
-    const rawForm = this.form.getRawValue()
+  onSubmit(): void {
+    const rawForm = this.form.getRawValue();
     this.authService
-      .register(rawForm.email, rawForm.username ,rawForm.password)
-      .subscribe((result) => {
-      if (result.error) {
-        this.errorMessage = result.error.message;
-      }else {
-        this.router.navigateByUrl('/');
-      }
-    })
+      .register(rawForm.email, rawForm.username, rawForm.password)
+      .subscribe({
+        next: (result) => {
+          if (result.error) {
+            this.errorMessage = result.error.message;
+          } else {
+            this.router.navigateByUrl('/').then();
+          }
+        },
+        error: (err) => {
+          console.error('Fatal register error:', err);
+          this.errorMessage = 'Unexpected error. Please try again.';
+        }
+      });
   }
+
 }

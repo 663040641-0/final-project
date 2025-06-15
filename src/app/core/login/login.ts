@@ -1,7 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
-import {HttpClient} from '@angular/common/http';
 import {AuthService} from '../services/auth.service';
 
 @Component({
@@ -20,21 +19,27 @@ export class Login {
   router = inject(Router);
 
   form = this.fb.nonNullable.group({
-    email: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
   })
   errorMessage: string | null = null;
 
   onSubmit(): void {
-    const rawForm = this.form.getRawValue()
+    const rawForm = this.form.getRawValue();
     this.authService
       .login(rawForm.email, rawForm.password)
-      .subscribe((result) => {
-        if (result.error) {
-          this.errorMessage = result.error.message;
-        }else {
-          this.router.navigateByUrl('/');
+      .subscribe({
+        next: (result) => {
+          if (result.error) {
+            this.errorMessage = result.error.message;
+          } else {
+            this.router.navigateByUrl('/collection').then();
+          }
+        },
+        error: (err) => {
+          console.error('Fatal register error:', err);
+          this.errorMessage = 'Unexpected error. Please try again.';
         }
-      })
+      });
   }
 }

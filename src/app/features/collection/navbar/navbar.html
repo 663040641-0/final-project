@@ -1,15 +1,28 @@
 <div class="bg-gradient-to-r from-[#ED008C] to-[#FFF000] h-30 flex justify-end items-center px-8 text-white text-2xl shadow-sm shadow-white rounded-2xl font-bold">
-  <button class="me-5 md:me-20 hover:cursor-pointer border-2 border-white px-4 py-3 rounded-2xl" (click)="openNavDialog()">Add</button>
+  <button class="me-5 hover:cursor-pointer border-2 border-white px-4 py-3 rounded-2xl" (click)="openNavDialog()">Add</button>
+  @if (authService.currentUser() === null){
+    <button class="me-5 md:me-20 hover:cursor-pointer border-2 border-white px-4 py-3 rounded-2xl" routerLink="/login">Login</button>
+  }
+  @if (authService.currentUser()) {
+    <div class="flex">
+      <button class="me-5 hover:cursor-pointer border-2 border-white px-4 py-3 rounded-2xl" routerLink="/login">Logout</button>
+      <h1 class="me-5 md:me-20 border-b-2 font-extrabold text-3xl bg-gray-800 bg-clip-text text-transparent p-3">{{ authService.currentUser()?.username }}</h1>
+    </div>
+  }
+
   <dialog #navDialog class="rounded-2xl p-6 bg-gradient-to-r from-[#ED008C] to-[#FFF000] text-white w-full max-w-md shadow-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-    <div class="flex flex-col">
-      <h1>Name</h1>
-      <input class="mb-2 p-1 bg-gray-200 text-black rounded-lg">
-      <h1>Image</h1>
-      <input class="my-3 p-1 bg-gray-200 text-black rounded-lg">
-      <h1>Description</h1>
-      <input class="my-2 p-1 bg-gray-200 text-black rounded-lg">
-      <h1 class="me-2 mt-1">Date</h1>
-      <input placeholder="xx/xx/xxxx" class="p-1 bg-gray-200 text-black rounded-lg">
+    <div class="flex flex-col text-lg font-extralight">
+      <form [formGroup]="addForm" (submit)="onSubmit()">
+        <h1>Name</h1>
+        <input type="text" class="mb-2 p-1 bg-gray-200 text-black rounded-lg">
+        <h1>Image</h1>
+        <input type="file" accept="image/*" class="my-3 p-1 bg-gray-200 text-black rounded-lg">
+        <h1>Description</h1>
+        <input type="text" class="my-2 p-1 bg-gray-200 text-black rounded-lg">
+        <h1 class="me-2 mt-1">Date</h1>
+        <input type="date" placeholder="xx/xx/xxxx" class="p-1 bg-gray-200 text-black rounded-lg">
+        <button type="submit" class="mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-[#5dadec] to-[#00a2ed] text-white hover:from-[#00a2ed] hover:to-[#237fb7] hover:cursor-pointer">Submit</button>
+        </form>
       <button class="mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-[#FF2C2C] to-[#FF5353] text-white hover:from-[#FF0000] hover:to-[#FF2C2C] hover:cursor-pointer" (click)="closeNavDialog()">Close</button>
     </div>
   </dialog>
