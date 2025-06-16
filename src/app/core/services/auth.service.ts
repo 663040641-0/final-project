@@ -62,5 +62,20 @@ export class AuthService {
   //   }
   // }
 
+  async getUserCollections(userId: string) {
+    const { data, error } = await this.supabase
+      .from('User_Collection')
+      .select('*')
+      .eq('user_id', userId); // fetch only collections for the current user
+
+    if (error) {
+      console.error('Error fetching collections:', error);
+      return [];
+    }
+
+    return data;
+  }
+
+
 
 }
