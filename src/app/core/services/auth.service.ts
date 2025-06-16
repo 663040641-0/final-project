@@ -15,7 +15,7 @@ export class AuthService {
     }
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
   }
-  currentUser = signal<{email:string, username:string} | null> (null);
+  currentUser = signal<{email:string, username:string, id:string} | null> (null);
 
   register(email: string, username: string, password: string):Observable<AuthResponse> {
     const promise = this.supabase.auth.signUp({
@@ -49,17 +49,18 @@ export class AuthService {
     await this.supabase.auth.signOut();
   }
 
-  setCurrentUserFromSession(session: Session | null): void {
-    if (session?.user) {
-      const { email, user_metadata } = session.user;
-      this.currentUser.set({
-        email: email!,
-        username: user_metadata?.['username'] || '',
-      });
-    } else {
-      this.currentUser.set(null);
-    }
-  }
+  // setCurrentUserFromSession(session: Session | null): void {
+  //   if (session?.user) {
+  //     const { email, user_metadata } = session.user;
+  //     this.currentUser.set({
+  //       email: email!,
+  //       username: user_metadata?.['username'] || '',
+  //       id: user.id,
+  //     });
+  //   } else {
+  //     this.currentUser.set(null);
+  //   }
+  // }
 
 
 }

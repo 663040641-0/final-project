@@ -26,6 +26,7 @@ export class Collection implements OnInit {
             ? {
               email: user.email!,
               username: user.user_metadata?.['username'] || '',
+              id: user.id,
             }
             : null
         );
