@@ -44,23 +44,9 @@ export class AuthService {
     );
   }
 
-
   async logout(): Promise<void> {
     await this.supabase.auth.signOut();
   }
-
-  // setCurrentUserFromSession(session: Session | null): void {
-  //   if (session?.user) {
-  //     const { email, user_metadata } = session.user;
-  //     this.currentUser.set({
-  //       email: email!,
-  //       username: user_metadata?.['username'] || '',
-  //       id: user.id,
-  //     });
-  //   } else {
-  //     this.currentUser.set(null);
-  //   }
-  // }
 
   async getUserCollections(userId: string) {
     const { data, error } = await this.supabase

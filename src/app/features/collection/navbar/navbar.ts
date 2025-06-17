@@ -50,7 +50,7 @@ export class Navbar {
     if (file) {
       const filePath = `${user?.id}/images/${Date.now()}_${file.name}`;
 
-      const { error: uploadError } = await this.authService.supabase
+      const {error: uploadError} = await this.authService.supabase
         .storage
         .from('collection')  // create a bucket in Supabase Storage
         .upload(filePath, file);
@@ -61,7 +61,7 @@ export class Navbar {
       }
 
       // Get public URL
-      const { data: publicUrlData } = this.authService.supabase
+      const {data: publicUrlData} = this.authService.supabase
         .storage
         .from('collection')
         .getPublicUrl(filePath);
@@ -69,7 +69,7 @@ export class Navbar {
       imageUrl = publicUrlData.publicUrl;
     }
 
-    const { error } = await this.authService.supabase
+    const {error} = await this.authService.supabase
       .from('User_Collection')
       .insert({
         name: formData.Name,
@@ -86,6 +86,7 @@ export class Navbar {
       console.log('Data submitted');
       this.addForm.reset();
       this.closeNavDialog();
+      await this.router.navigateByUrl('/', { skipLocationChange: true });
       await this.router.navigate(['/collection']);
     }
   }

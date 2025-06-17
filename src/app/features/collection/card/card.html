@@ -16,7 +16,8 @@
         <img src="https://static-00.iconduck.com/assets.00/pencil-icon-2048x2048-b2kyfub6.png" alt="pencil icon" width="50" height="50" class="invert p-2 border-1 border-black rounded-lg">
       </button>
       <button class="bg-red-600 hover:bg-red-500 mt-0 md:mt-10 p-2 rounded-xl hover:cursor-pointer hover:shadow-white hover:shadow-2xl">
-        <img src="https://cdn-icons-png.flaticon.com/512/484/484662.png" alt="bin icon" width="50" height="50" class="invert p-2 border-1 border-black rounded-lg">
+        <img src="https://cdn-icons-png.flaticon.com/512/484/484662.png" alt="bin icon" width="50" height="50" class="invert p-2 border-1 border-black rounded-lg"
+        (click)="deleteItem(item.id)">
       </button>
     </div>
   </div>
@@ -24,13 +25,13 @@
     <div class="flex flex-col">
       <form [formGroup]="editForm" (submit)="onSubmit()">
         <h1>Name</h1>
-        <input type="text" name="name" class="mb-2 p-1 bg-gray-200 text-black rounded-lg">
+        <input type="text" formControlName="name" class="mb-2 p-1 bg-gray-200 text-black rounded-lg">
         <h1>Image</h1>
         <input type="file" accept="image/*" class="my-3 p-1 bg-gray-200 text-black rounded-lg">
         <h1>Description</h1>
         <input type="text" class="my-2 p-1 bg-gray-200 text-black rounded-lg">
         <h1 class="me-2 mt-1">Date</h1>
-        <input type="date" placeholder="xx/xx/xxxx" class="p-1 bg-gray-200 text-black rounded-lg">
+        <input type="date" formControlName="Date" placeholder="xx/xx/xxxx" class="p-1 bg-gray-200 text-black rounded-lg">
         <button type="submit" class="mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-[#5dadec] to-[#00a2ed] text-white hover:from-[#00a2ed] hover:to-[#237fb7] hover:cursor-pointer">Submit</button>
       </form>
       <button class="mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-[#FF2C2C] to-[#FF5353] text-white hover:from-[#FF0000] hover:to-[#FF2C2C] hover:cursor-pointer" (click)="closeEditDialog()">Close</button>

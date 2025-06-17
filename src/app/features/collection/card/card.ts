@@ -36,7 +36,7 @@ export class Card implements OnInit {
   closeEditDialog() {
     this.editDialog.nativeElement.close()
   }
-
+  //fetch data from supabase database
   ngOnInit(): void {
     const checkUser = setInterval(() => {
       const user = this.authService.currentUser();
@@ -47,6 +47,23 @@ export class Card implements OnInit {
         });
       }
     }, 100); // check every 100ms until user is available
+  }
+
+  //delete item
+  async deleteItem(id: string) {
+    const { error } = await this.authService.supabase
+      .from('User_Collection')
+      .delete()
+      .eq('id', id); // delete where id = your provided id
+
+    if (error) {
+      console.error('Delete failed', error);
+    } else {
+      console.log('Item deleted');
+      this.collections.set(
+        this.collections().filter(item => item.id !== id)
+      );
+    }
   }
 
 
