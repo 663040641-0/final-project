@@ -3,6 +3,7 @@ import {NgOptimizedImage} from '@angular/common';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../../core/services/auth.service';
 import {Collections} from './collections.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-card',
@@ -16,8 +17,10 @@ import {Collections} from './collections.model';
 export class Card implements OnInit {
   authService = inject(AuthService);
   fb = inject(FormBuilder);
+  router= inject(Router);
 
   collections = signal<Collections[]>([]);
+  editingItem = signal<Collections | null>(null);
 
   editForm = this.fb.nonNullable.group({
     Name: ['', Validators.required],
@@ -28,10 +31,7 @@ export class Card implements OnInit {
   errorMessage: string | null = null;
 
   @ViewChild('editDialog') editDialog!: ElementRef<HTMLDialogElement>;
-
-  openEditDialog() {
-    this.editDialog.nativeElement.showModal()
-  }
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   closeEditDialog() {
     this.editDialog.nativeElement.close()
@@ -66,8 +66,70 @@ export class Card implements OnInit {
     }
   }
 
-
-  onSubmit() {
-
+  //edit items
+  openEditDialog(item: Collections) {
+    this.editingItem.set(item);
+    this.editForm.setValue({
+      Name: item.name,
+      Image: '', // skip this for file input
+      Description: item.description,
+      Date: item.date,
+    });
+    this.editDialog.nativeElement.showModal();
   }
+
+  async onSubmit() {
+    const user = this.authService.currentUser();
+    const item = this.editingItem();
+
+    if (!item || !user) return;
+
+    const formData = this.editForm.value;
+
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const file = this.fileInput.nativeElement.files?.[0];
+
+    let imageUrl = item.image_url;
+
+    if (file) {
+      const filePath = `${user.id}/images/${Date.now()}_${file.name}`;
+      const { error: uploadError } = await this.authService.supabase
+        .storage.from('collection')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('Image upload failed', uploadError);
+        return;
+      }
+
+      const { data: publicUrlData } = this.authService.supabase
+        .storage.from('collection')
+        .getPublicUrl(filePath);
+
+      imageUrl = publicUrlData.publicUrl;
+    }
+
+    const { error } = await this.authService.supabase
+      .from('User_Collection')
+      .update({
+        name: formData.Name,
+        description: formData.Description,
+        date: formData.Date,
+        image_url: imageUrl,
+      })
+      .eq('id', item.id);
+
+    if (!error) {
+      console.log('Item updated');
+      this.editDialog.nativeElement.close();
+      this.editingItem.set(null);
+
+      await this.router.navigateByUrl('/', { skipLocationChange: true });
+      await this.router.navigate(['/collection']);
+    }
+
+    this.editDialog.nativeElement.close();
+    this.editingItem.set(null);
+  }
+
 }

@@ -40,8 +40,6 @@ export class Navbar {
     const user = this.authService.currentUser();
     const formData = this.addForm.value;
 
-
-    // Get file from input
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
     const file = fileInput.files?.[0];
 
@@ -60,7 +58,6 @@ export class Navbar {
         return;
       }
 
-      // Get public URL
       const {data: publicUrlData} = this.authService.supabase
         .storage
         .from('collection')
